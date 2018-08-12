@@ -1,0 +1,106 @@
+<!doctype html>  
+<html lang="en">  
+    <head>
+    <script type="text/javascript" src="js/aframe.0.8.min.js"></script>
+    </head>
+    <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        AFRAME.registerComponent('main', {
+
+          init: function () {
+            this.socket = io();
+            this.player;
+            this.team;
+            this.receive;
+            var parent = this;
+            this.socket.on('setup', function(data){
+                // console.log(data);
+                parent.player = data[0];
+                parent.team = data[1];
+                parent.receive = data[2];
+            });
+          },
+          update: function () {
+            // console.log(this.el.getAttribute('rotation'));
+          },
+          tick: function(){
+            // console.log(this.player);
+            this.socket.emit('updateRotation', this.el.getAttribute('rotation'));
+          }
+
+        });
+
+        AFRAME.registerComponent('secondary', {
+
+          init: function () {
+            // this.socket = io();
+
+          },
+          update: function () {
+            console.log('in update')
+            var parent = this;
+                var socket = io();
+                socket.on('updateCube', function(data){
+                    console.log(data);
+                    parent.el.setAttribute('rotation', data);
+                })
+
+            // this.socket.on('updateCube', function(data){
+            //     console.log(data);
+            //     // parent.el.setAttribute('rotation', data);
+            // })
+            // console.log(this.el.getAttribute('rotation'));
+
+          },
+          tick: function(){
+            // socket.on('updateCube', function(data){
+            //         console.log("data");
+            //     })
+            // console.log(this.player);
+            // socket.emit('updateRotation', this.el.getAttribute('rotation'));
+            // this.socket.on('updateCube', function(data){
+            //     console.log('data');
+            //     // parent.el.setAttribute('rotation', data);
+            // })
+          }
+
+        });
+
+    </script>
+    <a-scene>
+     <!-- <a-box main position="-1 0.5 -3" rotation="0 0 0" color="#4CC3D9"> -->
+     <!-- </a-box> -->
+     <a-box secondary position="1 0.5 -3" rotation="0 0 0" color="#EEC909"></a-box>
+      <a-box main position="-1 0.5 -3" rotation="0 0 0" color="#4CC3D9">
+          <a-animation attribute="rotation"
+               dur="10000"
+               fill="forwards"
+               to="0 360 0"
+               repeat="indefinite"></a-animation>
+      </a-box>
+
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+       <!--  <script src="/socket.io/socket.io.js"></script>
+        <script>
+        var socket = io();
+        // socket.on('setup', function(data){
+        //     console.log(data);
+        //     socket.emit(data, 'hello there');
+        // })
+        // var socket = io();
+        // socket.on('test', function(){
+        //     console.log('hi')
+        // })
+
+        socket.emit('test', 'hello test');
+
+        socket.on('test2', function(data){
+            console.log(data);
+        })
+
+        </script> -->
+    </body>
+</html>
